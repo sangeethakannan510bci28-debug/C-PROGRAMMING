@@ -1,0 +1,12 @@
+#include<stdio.h>
+int main()
+{
+   int x,square,cube;
+   printf("enter the evalue:");
+   scanf("%d",&x);
+   square=x*x;
+   cube=x*x*x;
+   printf("square=%d",square);
+   printf("cube=%d",cube);
+   return 0;
+}
