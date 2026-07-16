@@ -1,0 +1,12 @@
+#include <stdio.h>
+int main()
+{
+   float basic_pay, da, hra, allowance = 2000, gross_salary;
+   printf("Enter Basic Pay: ");
+   scanf("%f", &basic_pay);
+   da = 0.40 * basic_pay;
+   hra = 0.10 * basic_pay;
+   gross_salary = basic_pay + da + hra + allowance;
+   printf("Gross Salary = %.2f\n", gross_salary);
+   return 0;
+}
