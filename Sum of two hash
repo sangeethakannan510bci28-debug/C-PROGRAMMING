@@ -1,0 +1,39 @@
+ #include<stdio.h>
+  2 int main()
+  3 {
+  4    int size,target;
+  5    int i=0;
+  6    int j=0;
+  7    int found;
+  8    printf("enter the size of the elements:");
+  9    scanf("%d",&size);
+ 10    int nums[size];
+ 11    printf("enter the elemnts:");
+ 12    for(i=0;i<size;i++)
+ 13    {
+ 14       scanf("%d",&nums[i]);
+ 15    }
+ 16    printf("enter the target value:");
+ 17    scanf("%d",&target);
+ 18    for(i=0;i<size;i++)
+ 19    {
+ 20       for(j=i+1;j<size;j++)
+ 21       {
+ 22          if(nums[i]+nums[j]==target)
+ 23          {
+ 24             printf("the indices are :[%d %d]",i,j);
+ 25             found=1;
+ 26             break;
+ 27          }
+ 28       }
+ 29       if (found)
+ 30       {
+ 31          break;
+ 32       }
+ 33    }
+ 34    if(!found)
+ 35    {
+ 36       printf("no elements found to the target");
+ 37    }
+ 38 return 0;
+ 39 }
