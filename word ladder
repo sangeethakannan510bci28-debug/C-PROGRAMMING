@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+// Helper function to check if two words differ by exactly one character
+bool isAdjacent(const char* a, const char* b, int len) {
+    int diff = 0;
+    for (int i = 0; i < len; i++) {
+        if (a[i] != b[i]) {
+            diff++;
+            if (diff > 1) return false;
+        }
+    }
+    return diff == 1;
+}
+
+int ladderLength(char* beginWord, char* endWord, char** wordList, int wordListSize) {
+    int wordLen = strlen(beginWord);
+    int endIdx = -1;
+
+    // 1. Check if endWord exists in the wordList
+    for (int i = 0; i < wordListSize; i++) {
+        if (strcmp(wordList[i], endWord) == 0) {
+            endIdx = i;
+            break;
+        }
+    }
+    if (endIdx == -1) return 0; // If endWord is not in the dictionary, no sequence exists
+
+    // 2. Setup BFS queue and tracking arrays
+    int* queue = (int*)malloc(sizeof(int) * wordListSize);
+    char* visited = (char*)calloc(wordListSize, sizeof(char));
+    int head = 0, tail = 0;
+
+    // 3. Find all direct neighbors of beginWord to initialize the queue
+    for (int i = 0; i < wordListSize; i++) {
+        if (isAdjacent(beginWord, wordList[i], wordLen)) {
+            if (i == endIdx) {
+                free(queue);
+                free(visited);
+                return 2; // Directly reached in 2 steps: beginWord -> endWord
+            }
+            queue[tail++] = i;
+            visited[i] = 1;
+        }
+    }
+
+    // 4. Process level-by-level BFS
+    int level = 2; 
+    while (head < tail) {
+        int currentLevelSize = tail - head;
+        level++;
+
+        for (int i = 0; i < currentLevelSize; i++) {
+            int curr = queue[head++];
+            char* currWord = wordList[curr];
+
+            for (int j = 0; j < wordListSize; j++) {
+                if (!visited[j] && isAdjacent(currWord, wordList[j], wordLen)) {
+                    if (j == endIdx) {
+                        free(queue);
+                        free(visited);
+                        return level;
+                    }
+                    queue[tail++] = j;
+                    visited[j] = 1;
+                }
+            }
+        }
+    }
+
+    // Clean up memory if no sequence is found
+    free(queue);
+    free(visited);
+    return 0;
+}
