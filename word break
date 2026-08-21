@@ -1,0 +1,29 @@
+#include <stdbool.h>
+#include <string.h>
+
+bool wordBreak(char* s, char** wordDict, int wordDictSize) {
+    int len = strlen(s);
+    
+    // dp[i] will be true if s[0...i-1] can be segmented into dictionary words
+    bool dp[301] = {false}; 
+    dp[0] = true; // Base case: an empty string can always be segmented
+
+    for (int i = 0; i < len; i++) {
+        // If the current prefix s[0...i-1] is valid, try to match dictionary words starting from index i
+        if (dp[i]) {
+            for (int j = 0; j < wordDictSize; j++) {
+                int wordLen = strlen(wordDict[j]);
+                
+                // Check if the word fits within the remaining length of string s
+                if (i + wordLen <= len) {
+                    // Compare the substring of s starting at i with the dictionary word
+                    if (strncmp(s + i, wordDict[j], wordLen) == 0) {
+                        dp[i + wordLen] = true;
+                    }
+                }
+            }
+        }
+    }
+
+    return dp[len];
+}
