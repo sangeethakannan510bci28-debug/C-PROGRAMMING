@@ -1,0 +1,70 @@
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+char* minWindow(char* s, char* t) {
+    if (!s || !t || *s == '\0' || *t == '\0') {
+        char* empty = (char*)malloc(1);
+        empty[0] = '\0';
+        return empty;
+    }
+
+    // Hash maps to store frequencies of characters
+    int target_map[128] = {0};
+    int window_map[128] = {0};
+    
+    int required = 0;
+    for (int i = 0; t[i] != '\0'; i++) {
+        if (target_map[(unsigned char)t[i]] == 0) {
+            required++; // Number of unique characters needed
+        }
+        target_map[(unsigned char)t[i]]++;
+    }
+
+    int left = 0, right = 0;
+    int formed = 0; // Tracks unique characters matching the target frequency
+    int min_len = INT_MAX;
+    int min_left = 0;
+
+    while (s[right] != '\0') {
+        char c = s[right];
+        window_map[(unsigned char)c]++;
+
+        // If the current character's frequency matches the target frequency
+        if (target_map[(unsigned char)c] > 0 && window_map[(unsigned char)c] == target_map[(unsigned char)c]) {
+            formed++;
+        }
+
+        // Try to contract the window from the left once a valid window is found
+        while (formed == required) {
+            if (right - left + 1 < min_len) {
+                min_len = right - left + 1;
+                min_left = left;
+            }
+
+            char left_char = s[left];
+            window_map[(unsigned char)left_char]--;
+            
+            // If removing this character breaks the target condition
+            if (target_map[(unsigned char)left_char] > 0 && window_map[(unsigned char)left_char] < target_map[(unsigned char)left_char]) {
+                formed--;
+            }
+            left++;
+        }
+        right++;
+    }
+
+    // If no valid window was found, return an empty string
+    if (min_len == INT_MAX) {
+        char* empty = (char*)malloc(1);
+        empty[0] = '\0';
+        return empty;
+    }
+
+    // Allocate and return the minimum window substring
+    char* result = (char*)malloc((min_len + 1) * sizeof(char));
+    strncpy(result, s + min_left, min_len);
+    result[min_len] = '\0';
+    
+    return result;
+}
