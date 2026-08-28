@@ -1,0 +1,41 @@
+#include <stdbool.h>
+#include <stdlib.h>
+
+// Helper function to perform inorder traversal and store values in an array
+void inorder(struct TreeNode* root, int* arr, int* size) {
+    if (root == NULL) return;
+    
+    inorder(root->left, arr, size);
+    arr[(*size)++] = root->val;
+    inorder(root->right, arr, size);
+}
+
+// Main function to check if two elements sum up to k
+bool findTarget(struct TreeNode* root, int k) {
+    // A temporary array to store the nodes in sorted order.
+    // Constraints on LeetCode usually limit nodes to 10,000.
+    int* arr = (int*)malloc(10001 * sizeof(int));
+    int size = 0;
+    
+    // Step 1: Collect sorted elements
+    inorder(root, arr, &size);
+    
+    // Step 2: Use two pointers to find the target sum
+    int left = 0;
+    int right = size - 1;
+    
+    while (left < right) {
+        int current_sum = arr[left] + arr[right];
+        if (current_sum == k) {
+            free(arr);
+            return true;
+        } else if (current_sum < k) {
+            left++; // Move left pointer right to increase the sum
+        } else {
+            right--; // Move right pointer left to decrease the sum
+        }
+    }
+    
+    free(arr);
+    return false;
+}
