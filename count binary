@@ -1,0 +1,28 @@
+#include <string.h>
+
+int countBinarySubstrings(char* s) {
+    int ans = 0;
+    int prev = 0; // Length of the previous block
+    int curr = 1; // Length of the current block
+    
+    // Iterate through the string starting from the second character
+    for (int i = 1; s[i] != '\0'; i++) {
+        if (s[i] == s[i - 1]) {
+            curr++;
+        } else {
+            // We reached a new group of characters
+            if (prev > 0) {
+                ans += (prev < curr) ? prev : curr;
+            }
+            prev = curr;
+            curr = 1;
+        }
+    }
+    
+    // Add the valid substrings from the last pair of groups
+    if (prev > 0) {
+        ans += (prev < curr) ? prev : curr;
+    }
+    
+    return ans;
+}
