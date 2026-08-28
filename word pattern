@@ -1,0 +1,59 @@
+#include <stdbool.h>
+#include <string.h>
+#include <stdlib.h>
+
+bool wordPattern(char* pattern, char* s) {
+    // Array to store the mapping from char ('a'-'z') to its corresponding word string
+    char* charToWord[26];
+    for (int i = 0; i < 26; i++) {
+        charToWord[i] = NULL;
+    }
+    
+    // Create a mutable copy of 's' because strtok modifies the input string
+    char* sCopy = malloc(strlen(s) + 1);
+    strcpy(sCopy, s);
+    
+    int patternLen = strlen(pattern);
+    int wordCount = 0;
+    
+    // Tokenize the string by spaces
+    char* word = strtok(sCopy, " ");
+    
+    while (word != NULL) {
+        // If we have more words than characters in the pattern, it's not a match
+        if (wordCount >= patternLen) {
+            free(sCopy);
+            return false;
+        }
+        
+        char c = pattern[wordCount];
+        int index = c - 'a';
+        
+        // Scenario 1: The character has already been mapped to a word
+        if (charToWord[index] != NULL) {
+            if (strcmp(charToWord[index], word) != 0) {
+                free(sCopy);
+                return false; // Mismatched word mapping
+            }
+        } 
+        // Scenario 2: The character is new, check if the word is already used by another character
+        else {
+            for (int i = 0; i < 26; i++) {
+                if (charToWord[i] != NULL && strcmp(charToWord[i], word) == 0) {
+                    free(sCopy);
+                    return false; // Word is already bound to a different character
+                }
+            }
+            // Bind the character to the word
+            charToWord[index] = word;
+        }
+        
+        wordCount++;
+        word = strtok(NULL, " ");
+    }
+    
+    free(sCopy);
+    
+    // The number of tokens/words must precisely equal the pattern length
+    return wordCount == patternLen;
+}
