@@ -1,0 +1,28 @@
+#include <string.h>
+#include <ctype.h>
+
+char* reverseOnlyLetters(char* s) {
+    int left = 0;
+    int right = strlen(s) - 1;
+    
+    while (left < right) {
+        // Move the left pointer if it's not an English letter
+        if (!isalpha(s[left])) {
+            left++;
+        } 
+        // Move the right pointer if it's not an English letter
+        else if (!isalpha(s[right])) {
+            right--;
+        } 
+        // Both are letters, so swap them and move both pointers
+        else {
+            char temp = s[left];
+            s[left] = s[right];
+            s[right] = temp;
+            left++;
+            right--;
+        }
+    }
+    
+    return s;
+}
