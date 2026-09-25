@@ -1,0 +1,46 @@
+#include <stdlib.h>
+#include <string.h>
+
+char** findRepeatedDnaSequences(char* s, int* returnSize) {
+    *returnSize = 0;
+    int len = strlen(s);
+    if (len < 10) return NULL;
+
+    // Hash map to track status: 0 = unseen, 1 = seen once, 2 = added to output
+    unsigned char* seen = (unsigned char*)calloc(1048576, sizeof(unsigned char));
+    char** result = (char**)malloc((len - 9) * sizeof(char*));
+    
+    // Map nucleotides to 2-bit values
+    int map[256] = {0};
+    map['A'] = 0; // 00
+    map['C'] = 1; // 01
+    map['G'] = 2; // 10
+    map['T'] = 3; // 11
+
+    int mask = 0xFFFFF; // 20-bit mask
+    int current_hash = 0;
+
+    // Initialize the first 9 characters
+    for (int i = 0; i < 9; i++) {
+        current_hash = (current_hash << 2) | map[(unsigned char)s[i]];
+    }
+
+    // Slide the window across the string
+    for (int i = 9; i < len; i++) {
+        current_hash = ((current_hash << 2) | map[(unsigned char)s[i]]) & mask;
+        
+        if (seen[current_hash] == 1) {
+            // Sequence found for the second time
+            result[*returnSize] = (char*)malloc(11 * sizeof(char));
+            strncpy(result[*returnSize], &s[i - 9], 10);
+            result[*returnSize][10] = '\0';
+            (*returnSize)++;
+            seen[current_hash] = 2; // Mark as already recorded
+        } else if (seen[current_hash] == 0) {
+            seen[current_hash] = 1; // Mark as seen once
+        }
+    }
+
+    free(seen);
+    return result;
+}
