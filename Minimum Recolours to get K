@@ -1,0 +1,34 @@
+#include <string.h>
+
+int minimumRecolors(char* blocks, int k) {
+    int n = strlen(blocks);
+    int current_w = 0;
+
+    // Count 'W' in the first window of size k
+    for (int i = 0; i < k; i++) {
+        if (blocks[i] == 'W') {
+            current_w++;
+        }
+    }
+
+    int min_w = current_w;
+
+    // Slide the window across the rest of the string
+    for (int i = k; i < n; i++) {
+        // Remove the element leaving the window
+        if (blocks[i - k] == 'W') {
+            current_w--;
+        }
+        // Add the new element entering the window
+        if (blocks[i] == 'W') {
+            current_w++;
+        }
+        
+        // Update the minimum recolors needed
+        if (current_w < min_w) {
+            min_w = current_w;
+        }
+    }
+
+    return min_w;
+}
