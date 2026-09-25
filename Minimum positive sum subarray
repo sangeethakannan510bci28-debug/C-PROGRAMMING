@@ -1,0 +1,36 @@
+int minimumSumSubarray(int* nums, int numsSize, int l, int r) {
+    int min_sum = -1;
+    
+    // Iterate through all allowed subarray lengths
+    for (int len = l; len <= r; len++) {
+        if (len > numsSize) {
+            break;
+        }
+        
+        // Calculate the sum of the first window of size 'len'
+        int current_sum = 0;
+        for (int i = 0; i < len; i++) {
+            current_sum += nums[i];
+        }
+        
+        // Check if the first window sum is valid
+        if (current_sum > 0) {
+            if (min_sum == -1 || current_sum < min_sum) {
+                min_sum = current_sum;
+            }
+        }
+        
+        // Slide the window across the rest of the array
+        for (int i = len; i < numsSize; i++) {
+            current_sum += nums[i] - nums[i - len];
+            
+            if (current_sum > 0) {
+                if (min_sum == -1 || current_sum < min_sum) {
+                    min_sum = current_sum;
+                }
+            }
+        }
+    }
+    
+    return min_sum;
+}
