@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Structure to hold element frequency and value
+typedef struct {
+    int val;
+    int count;
+} Element;
+
+// Comparator to sort elements by frequency (descending) 
+// and then by value (descending) if frequencies match
+int compare(const void* a, const void* b) {
+    Element* e1 = (Element*)a;
+    Element* e2 = (Element*)b;
+    if (e1->count != e2->count) {
+        return e2->count - e1->count; // Higher frequency first
+    }
+    return e2->val - e1->val;         // Higher value first
+}
+
+int* findXSum(int* nums, int numsSize, int k, int x, int* returnSize) {
+    *returnSize = numsSize - k + 1;
+    int* answer = (int*)malloc((*returnSize) * sizeof(int));
+    
+    // Frequency map for elements in the current window
+    // Since it's version I, values are typically small (1 to 50)
+    // We can use a fixed-size hash map or frequency array up to 51
+    int freq[51] = {0};
+    
+    for (int i = 0; i <= numsSize - k; i++) {
+        // Reset frequencies for each window
+        memset(freq, 0, sizeof(freq));
+        
+        // Count occurrences in the current subarray nums[i ... i + k - 1]
+        for (int j = i; j < i + k; j++) {
+            freq[nums[j]]++;
+        }
+        
+        // Collect all distinct elements present in this window
+        Element elements[51];
+        int uniqueCount = 0;
+        for (int v = 1; v <= 50; v++) {
+            if (freq[v] > 0) {
+                elements[uniqueCount].val = v;
+                elements[uniqueCount].count = freq[v];
+                uniqueCount++;
+            }
+        }
+        
+        // Sort elements according to the rule
+        qsort(elements, uniqueCount, sizeof(Element), compare);
+        
+        // Sum up the top x most frequent elements
+        int currentXSum = 0;
+        int limit = (uniqueCount < x) ? uniqueCount : x;
+        for (int m = 0; m < limit; m++) {
+            currentXSum += elements[m].val * elements[m].count;
+        }
+        
+        answer[i] = currentXSum;
+    }
+    
+    return answer;
+}
