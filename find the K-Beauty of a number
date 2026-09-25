@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int divisorSubstrings(int num, int k) {
+    char s[20];
+    // Convert the integer num into a string format
+    sprintf(s, "%d", num);
+    
+    int len = strlen(s);
+    int count = 0;
+    
+    for (int i = 0; i <= len - k; i++) {
+        char sub[20];
+        // Copy k characters starting from index i
+        strncpy(sub, s + i, k);
+        sub[k] = '\0'; // Manually null-terminate the string
+        
+        // Convert the substring back to an integer
+        int val = atoi(sub);
+        
+        // Avoid division by zero and check if it divides num perfectly
+        if (val != 0 && num % val == 0) {
+            count++;
+        }
+    }
+    
+    return count;
+}
