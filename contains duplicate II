@@ -1,0 +1,51 @@
+#include <stdbool.h>
+#include <stdlib.h>
+#include "uthash.h"
+
+// Define the hash structure
+typedef struct {
+    int key;            // The number from the array
+    int index;          // Its most recent index
+    UT_hash_handle hh;  // Makes this structure hashable
+} NumHash;
+
+bool containsNearbyDuplicate(int* nums, int numsSize, int k) {
+    NumHash* hashTable = NULL;
+    
+    for (int i = 0; i < numsSize; i++) {
+        NumHash* element;
+        
+        // Check if the number already exists in our hash map
+        HASH_FIND_INT(hashTable, &nums[i], element);
+        
+        if (element != NULL) {
+            // If it exists, check if the distance constraint is met
+            if (i - element->index <= k) {
+                // Free memory before returning true to prevent leaks
+                NumHash *curr, *tmp;
+                HASH_ITER(hh, hashTable, curr, tmp) {
+                    HASH_DEL(hashTable, curr);
+                    free(curr);
+                }
+                return true;
+            }
+            // Update to the latest index if the distance was greater than k
+            element->index = i;
+        } else {
+            // If it doesn't exist, add it to the hash map
+            element = (NumHash*)malloc(sizeof(NumHash));
+            element->key = nums[i];
+            element->index = i;
+            HASH_ADD_INT(hashTable, key, element);
+        }
+    }
+    
+    // Clean up hash table memory before returning false
+    NumHash *curr, *tmp;
+    HASH_ITER(hh, hashTable, curr, tmp) {
+        HASH_DEL(hashTable, curr);
+        free(curr);
+    }
+    
+    return false;
+}
