@@ -1,0 +1,42 @@
+#include <string.h>
+
+int countRotations(char* s, int k) {
+    int n = strlen(s);
+    if (n <= 1) {
+        return (k == 0) ? 1 : 0;
+    }
+
+    int current_score = 0;
+    // Step 1: Compute the score for the initial configuration (rotation 0)
+    for (int i = 0; i < n - 1; i++) {
+        if (s[i] == s[i + 1]) {
+            current_score++;
+        }
+    }
+
+    int valid_rotations_count = 0;
+    if (current_score == k) {
+        valid_rotations_count++;
+    }
+
+    // Step 2: Slide the window for all other n-1 rotations
+    for (int j = 1; j < n; j++) {
+        // Remove the contribution of the outgoing pair at the start of the previous window
+        if (s[j - 1] == s[j]) {
+            current_score--;
+        }
+
+        // Add the contribution of the incoming pair at the end of the current window
+        // The new pair connects the end of the window to the wrapped-around character
+        if (s[(j + n - 2) % n] == s[(j - 1) % n]) {
+            current_score++;
+        }
+
+        // Check if the current rotation satisfies the condition
+        if (current_score == k) {
+            valid_rotations_count++;
+        }
+    }
+
+    return valid_rotations_count;
+}
