@@ -1,0 +1,49 @@
+#include <math.h>
+
+// Helper function to compute Greatest Common Divisor
+long long gcd(long long a, long long b) {
+    while (b != 0) {
+        long long temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+// Helper function to compute Least Common Multiple
+long long lcm(long long a, long long b) {
+    if (a == 0 || b == 0) return 0;
+    return (a / gcd(a, b)) * b;
+}
+
+int maxLength(int* nums, int numsSize) {
+    int maxLen = 0;
+    
+    for (int i = 0; i < numsSize; i++) {
+        long long prod = 1;
+        long long currentGcd = nums[i];
+        long long currentLcm = nums[i];
+        
+        for (int j = i; j < numsSize; j++) {
+            prod *= nums[j];
+            
+            // Pruning optimization to avoid overflow
+            if (prod > 25200) {
+                break;
+            }
+            
+            currentGcd = gcd(currentGcd, nums[j]);
+            currentLcm = lcm(currentLcm, nums[j]);
+            
+            // Check product equivalence condition
+            if (prod == currentLcm * currentGcd) {
+                int currentLen = j - i + 1;
+                if (currentLen > maxLen) {
+                    maxLen = currentLen;
+                }
+            }
+        }
+    }
+    
+    return maxLen;
+}
