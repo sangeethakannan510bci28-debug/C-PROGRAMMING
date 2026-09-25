@@ -1,0 +1,45 @@
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+int* decrypt(int* code, int codeSize, int k, int* returnSize) {
+    *returnSize = codeSize;
+    int* result = (int*)calloc(codeSize, sizeof(int));
+    
+    // Case 1: If k == 0, return an array filled with 0s (already handled by calloc)
+    if (k == 0) {
+        return result;
+    }
+    
+    int current_sum = 0;
+    
+    if (k > 0) {
+        // Initialize the first window for index 0 (sum from index 1 to k)
+        for (int j = 1; j <= k; j++) {
+            current_sum += code[j % codeSize];
+        }
+        
+        // Slide the window across the circular array
+        for (int i = 0; i < codeSize; i++) {
+            result[i] = current_sum;
+            // Slide window: subtract the element leaving (i + 1) and add the new element (i + k + 1)
+            current_sum -= code[(i + 1) % codeSize];
+            current_sum += code[(i + k + 1) % codeSize];
+        }
+    } else { // k < 0
+        int abs_k = -k;
+        // Initialize the first window for index 0 (sum of the last abs_k elements)
+        for (int j = 1; j <= abs_k; j++) {
+            current_sum += code[(codeSize - j) % codeSize];
+        }
+        
+        // Slide the window across the circular array
+        for (int i = 0; i < codeSize; i++) {
+            result[i] = current_sum;
+            // Slide window: subtract the oldest element in the window and add the current element code[i]
+            current_sum -= code[(i - abs_k + codeSize) % codeSize];
+            current_sum += code[i];
+        }
+    }
+    
+    return result;
+}
