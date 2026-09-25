@@ -1,0 +1,31 @@
+#include <string.h>
+
+int longestAlternatingSubarray(int* nums, int numsSize, int threshold) {
+    int max_len = 0;
+    
+    for (int l = 0; l < numsSize; l++) {
+        // Condition 1 & 3: Subarray must start with an even number <= threshold
+        if (nums[l] % 2 == 0 && nums[l] <= threshold) {
+            int r = l;
+            
+            // Expand the right pointer as long as alternating and threshold conditions are met
+            while (r + 1 < numsSize && 
+                   nums[r + 1] <= threshold && 
+                   (nums[r] % 2 != nums[r + 1] % 2)) {
+                r++;
+            }
+            
+            // Calculate and update the maximum length found
+            int current_len = r - l + 1;
+            if (current_len > max_len) {
+                max_len = current_len;
+            }
+            
+            // Optimization: Skip processed elements since any valid sub-start 
+            // inside [l, r] would only yield a shorter length.
+            l = r;
+        }
+    }
+    
+    return max_len;
+}
