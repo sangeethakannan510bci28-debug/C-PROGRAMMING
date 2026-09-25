@@ -1,0 +1,33 @@
+#include <string.h>
+
+int countKConstraintSubstrings(char* s, int k) {
+    int count0 = 0;
+    int count1 = 0;
+    int left = 0;
+    int total_substrings = 0;
+    int n = strlen(s);
+    
+    for (int right = 0; right < n; right++) {
+        // Track character counts in the current window
+        if (s[right] == '0') {
+            count0++;
+        } else {
+            count1++;
+        }
+        
+        // Shrink window if BOTH '0's and '1's exceed k
+        while (count0 > k && count1 > k) {
+            if (s[left] == '0') {
+                count0--;
+            } else {
+                count1--;
+            }
+            left++;
+        }
+        
+        // Count all valid substrings ending at 'right'
+        total_substrings += (right - left + 1);
+    }
+    
+    return total_substrings;
+}
