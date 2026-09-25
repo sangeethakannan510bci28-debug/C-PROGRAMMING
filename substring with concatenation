@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define HASH_SIZE 10007 // <-- Add this line
+
+typedef struct Node {
+    char* word;
+    int id;
+    struct Node* next;
+} Node;
+
+// Simple polynomial rolling hash function
+unsigned int get_hash(const char* str, int len) {
+    unsigned int hash = 0;
+    for (int i = 0; i < len; i++) {
+        // Your hash calculation logic here
+    }
+    return hash % HASH_SIZE; 
+}
