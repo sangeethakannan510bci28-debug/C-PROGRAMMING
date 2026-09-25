@@ -1,0 +1,28 @@
+#include <string.h>
+
+int maximumLengthSubstring(char* s) {
+    int count[26] = {0};
+    int max_len = 0;
+    int left = 0;
+    int len = strlen(s);
+    
+    for (int right = 0; right < len; right++) {
+        // Track frequency of current character
+        int idx = s[right] - 'a';
+        count[idx]++;
+        
+        // Shrink window if frequency exceeds 2
+        while (count[idx] > 2) {
+            count[s[left] - 'a']--;
+            left++;
+        }
+        
+        // Update maximum length
+        int current_len = right - left + 1;
+        if (current_len > max_len) {
+            max_len = current_len;
+        }
+    }
+    
+    return max_len;
+}
