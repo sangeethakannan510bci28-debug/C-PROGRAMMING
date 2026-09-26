@@ -1,0 +1,44 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
+ * };
+ */
+
+// Helper function to count the total number of nodes in the tree
+int countNodes(struct TreeNode* root) {
+    if (root == NULL) return 0;
+    return 1 + countNodes(root->left) + countNodes(root->right);
+}
+
+// Helper function to perform inorder traversal and fill the array
+void inorder(struct TreeNode* root, int* arr, int* index) {
+    if (root == NULL) return;
+    
+    inorder(root->left, arr, index);     // Visit Left
+    arr[(*index)++] = root->val;         // Visit Root
+    inorder(root->right, arr, index);    // Visit Right
+}
+
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+int* inorderTraversal(struct TreeNode* root, int* returnSize) {
+    // 1. Find the total number of nodes to allocate the exact memory needed
+    *returnSize = countNodes(root);
+    
+    // 2. Allocate memory for the result array
+    int* result = (int*)malloc((*returnSize) * sizeof(int));
+    if (result == NULL) {
+        *returnSize = 0;
+        return NULL;
+    }
+    
+    // 3. Populate the array using inorder traversal
+    int index = 0;
+    inorder(root, result, &index);
+    
+    return result;
+}
